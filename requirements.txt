@@ -1,0 +1,3 @@
+# Bu skript faqat Python standart kutubxonalaridan foydalanadi,
+# shuning uchun tashqi paketlar shart emas.
+# (urllib, xml.etree - Python bilan birga keladi)

@@ -1,0 +1,35 @@
+name: YouTube -> Telegram tekshiruv
+
+on:
+  schedule:
+    # Har soatda ishga tushadi (UTC vaqti bo'yicha). Xohlasangiz o'zgartiring.
+    - cron: "0 * * * *"
+  workflow_dispatch: {}   # Qo'lda ham ishga tushirish imkoniyati (Actions bo'limidan)
+
+permissions:
+  contents: write   # last_video_id.txt faylini repo'ga qaytarib yozish uchun
+
+jobs:
+  check-and-post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Botni ishga tushirish
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHANNEL_ID: ${{ secrets.TG_CHANNEL_ID }}
+          YT_CHANNEL_ID: ${{ secrets.YT_CHANNEL_ID }}
+        run: python bot.py
+
+      - name: Holatni saqlash (last_video_id.txt)
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add last_video_id.txt || true
+          git diff --cached --quiet || git commit -m "chore: yangi video ID yangilandi"
+          git push || true
